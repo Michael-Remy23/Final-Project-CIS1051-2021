@@ -1,0 +1,288 @@
+<html>
+    <head>
+        <!-- Implementation of Bootstrap done with "https://www.w3schools.com/bootstrap/bootstrap_get_started.asp" -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+        <style>
+            body{
+                background-color:#D3D3D3;
+            }
+            .input{
+                display: flex;
+                justify-content: center; 
+            }
+            input{
+                width: 1000px;
+            }
+
+            .name{
+                border: solid;
+                width: 200px;
+                background-color: rgb(238, 224, 207);
+            }
+            img{
+                border: solid;
+                background-color: lightgray;
+            }
+            .name h5{
+                border-bottom: solid;
+            }
+            .type{
+                border: solid;
+                width: 200px;
+                background-color: rgb(238, 224, 207);
+            }
+            .type h5{
+                border-bottom: solid;
+            }
+            .biology{
+                border: solid;
+                width: 200px;
+                background-color: rgb(238, 224, 207);
+            }
+            .biology p:nth-child(3){
+                border-top: solid;
+            }
+            .biology h5{
+                border-bottom: solid
+            }
+            .stats{
+                border: solid;
+                width: 200px;
+                background-color: rgb(238, 224, 207);
+            }
+            .stats p:nth-child(3){
+                border-top: solid;
+            }
+            .stats p:nth-child(5){
+                border-top: solid;
+            }
+            .stats p:nth-child(7){
+                border-top: solid;
+            }
+            .stats p:nth-child(9){
+                border-top: solid;
+            }
+            .stats p:nth-child(11){
+                border-top: solid;
+            }
+            .attacks{
+                border: solid;
+                width: 200px;
+                background-color: rgb(238, 224, 207);
+            }
+            .attacks h5{
+                border-bottom: solid;
+            }
+            canvas{
+                width: 0;
+            }
+            #myChart{
+                max-height: 500px;
+                max-width: 500px;
+            }
+            #header2{
+                color:red;
+                display: flex;
+                justify-content: center;
+            }
+            .pokedexFont img{
+                border: none;
+                padding-left: 570
+            }
+            #header2 img{
+                border: none;
+                width: 200;
+            }
+            h3{
+                display: flex;
+                justify-content: center;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <!-- Implementation of Pokemon Font done with "https://fontmeme.com/pokemon-font/" -->
+        <article class = pokedexFont>
+            <img src="https://fontmeme.com/temporary/551d1e7b044c186223720437acba7dcf.png">
+        </article>
+        
+        <div class = "input">
+            <input id="pokemon-id" type = "text" placeholder="Please Type in a Pokemon Name!" onchange="handleSearch()">
+        </div>
+        <p id="error-message"></p>
+
+        <div class="name">
+            <p>Pokemon Name: <span id="name"></span></p>
+        </div>
+    </br>
+        <img src="" class="pokemon-image">
+    </br>
+</br>
+        <div class="biology">
+            <p>Pokemon Height: <span id="height"></span></p>
+            <p>Pokemon Weight: <span id="weight"></span></p>
+        </div>
+    </br>
+        <div class="type">
+            <p>Type(s):
+                <span id ="type-1"></span>
+                <span id ="type-2"></span>
+            </p>
+        </div>
+    </br>
+    <h4>
+        <u>Stats for this Pokemon</u>
+    </h4>
+    <canvas id="myChart" width="500" height="500">chart</canvas>
+
+    </br>
+        <div class ="attacks">
+            <h5>Moves Learned by this Pokemon</h5>
+            <span class ="move-List"></span>
+            <span class ="move-text"></span>
+        </div>
+    </br>
+</br>
+</br>
+        <article id="header2">
+            <h1>Is this Pokemon Stronger than Charizard?</h1>
+            <img src="https://lh3.googleusercontent.com/proxy/5mA40T4zMLFUQ9bAs_0H7aNiMwl8jFYK3DwuJeGZvKeegfjciRqe36UYgLJPPSNQZq4-zZ_J4p_rnydKVoy4eAlY9e3D8GZlVGtEULrpU4a7oE-g-v5nOGM">
+        </article>
+        <h3 id = "charizardMessage"></h3>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+        <script>
+            const myInput = document.querySelector("#pokemon-id");
+            const nameParagraph = document.querySelector("#name");
+            const weightParagraph = document.querySelector("#weight");
+            const heightParagraph = document.querySelector("#height");
+            const image = document.querySelector(".pokemon-image");
+            const type1 = document.querySelector("#type-1");
+            const type2 = document.querySelector("#type-2");
+            const hp = document.querySelector(".pokemon-health");
+            const attack = document.querySelector(".pokemon-attack");
+            const defense = document.querySelector(".pokemon-defense");
+            const SpAttack = document.querySelector(".pokemon-special-attack");
+            const SpDefense = document.querySelector(".pokemon-special-defense");
+            const speed = document.querySelector(".pokemon-speed");
+            const moveList = document.querySelector(".move-list");
+            const errorParagraph = document.querySelector("#error-message");
+            const charizardMessage = document.querySelector("#charizardMessage")
+
+            function handleSearch(){
+                const pokemonName = myInput.value.trim().toLowerCase();
+                errorParagraph.innerText = "";
+                fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonName)
+                    .then(resp => resp.json())
+                    .then(data => {
+                        nameParagraph.innerText = data.name;
+                        weightParagraph.innerText = data.weight;
+                        heightParagraph.innerText = data.height;
+
+                        image.src = (data.sprites.front_default)
+
+                        const dataTypes = (data.types);
+                        const firstType = dataTypes[0];
+                        const secondType = dataTypes[1];
+                        type1.innerHTML = (firstType.type.name);
+                        if (secondType){
+                            type2.innerHTML = (secondType.type.name);
+                        } 
+                        else{
+                            type2.innerHTML = ""
+                        }
+                        const dataStats = (data.stats);
+                        
+                        const health = dataStats[0];
+                        const Attack = dataStats[1];
+                        const Defense = dataStats[2];
+                        const specialAttack = dataStats[3];
+                        const specialDefense = dataStats[4];
+                        const Speed = dataStats[5];
+                        
+                        const strength = Attack.base_stat + Defense.base_stat;
+                        
+                        const moves = data.moves.map(move => move.move.name)
+                        let moveItems = ""
+                        for(const move of moves){
+                            moveItems = moveItems + "<li>" + move + "</li>"
+                        }
+
+                        moveList.innerHTML = moveItems;
+                        console.log(health.base_stat);
+                        var ctx = document.getElementById('myChart');
+
+                        /*
+                        Implementation of chart done using "https://www.chartjs.org/docs/latest/"
+                        */
+                        if(window.myCharts != undefined)
+                        window.myCharts.destroy();
+                        window.myCharts = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Health', 'Attack', 'Defense', 'Special Attack', 'Special Defense', 'Speed'],
+                                datasets: [{
+                                    label: 'Base Stats',
+                                    data: [health.base_stat, Attack.base_stat, Defense.base_stat, specialAttack.base_stat, specialAttack.base_stat, Speed.base_stat],
+                                    backgroundColor: [
+                                        'rgba(213,10,13)',
+                                        'rgba(247,152,36)',
+                                        'rgba(246,170,28)',
+                                        'rgba(65,123,90)',
+                                        'rgba(58,134,255)',
+                                        'rgba(131,56,236)'
+                                    ], 
+                                    borderColor: [
+                                        'rgba(255,255,255)',
+                                        'rgba(255,255,255)',
+                                        'rgba(255,255,255)',
+                                        'rgba(255,255,255)',
+                                        'rgba(255,255,255)',
+                                        'rgba(255,255,255)'
+                                    ],
+                                    borderWidth: 3
+                                    
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: "Values",
+                                        },
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }],
+                                    xAxes: [{
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: "Base Stats",
+                                        },
+                                    }]
+                                }
+                            }
+                        });
+
+                        if(strength > 162){
+                            charizardMessage.innerText = "This pokemon is stronger than Charizard!"
+                        }
+                        else{
+                            charizardMessage.innerText = "This pokemon is weaker than Charizard!"
+                        }
+                    })
+                    
+                    .catch(e => {
+                        errorParagraph.innerText = "That Pokemon does not exist :("
+                        alert("That Pokemon does not exist :(")                    
+                    });
+
+            }
+        </script>
+    </body>
+</html>
