@@ -1,5 +1,6 @@
 # Final-Project-CIS1051-2021
 This is my final project for CIS 1051
+If you want to run the code on your own open it using Visual Studio Code and make sure to have the LiveServer Extension installed. 
 
 Here is the link to the Youtube video which gives an overview of my final project and walks through it. 
 https://youtu.be/m_fV4pcId7I
